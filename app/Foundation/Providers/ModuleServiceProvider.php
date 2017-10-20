@@ -28,6 +28,7 @@ class ModuleServiceProvider extends ServiceProvider
             ['group' => 'status', 'partial' => 'partials.modules.status'],
             ['group' => 'components', 'partial' => 'partials.modules.components'],
             ['group' => 'metrics', 'partial' => 'partials.modules.metrics'],
+            ['group' => 'stickied', 'partial' => 'partials.modules.stickied'],
             ['group' => 'scheduled', 'partial' => 'partials.modules.scheduled'],
             ['group' => 'timeline', 'partial' => 'partials.modules.timeline'],
         ],
@@ -45,7 +46,8 @@ class ModuleServiceProvider extends ServiceProvider
             'components' => 30000,
             'metrics'    => 40000,
             'scheduled'  => 50000,
-            'timeline'   => 60000,
+            'stickied'   => 60000,
+            'timeline'   => 70000,
         ],
     ];
 
@@ -56,7 +58,7 @@ class ModuleServiceProvider extends ServiceProvider
      */
     public function boot(BladeCompiler $blade)
     {
-        $blade->directive('modules', function ($group = null) {
+        $blade->directive('modules', function ($group) {
             return sprintf(
                 '<?php echo $app->call(\'%s@%s\', [
                     \'factory\' => $__env,
@@ -66,7 +68,7 @@ class ModuleServiceProvider extends ServiceProvider
                 ]); ?>',
                 ModulesRenderer::class,
                 'renderModules',
-                $group === null ? 'null' : $group
+                empty($group) ? 'null' : $group
             );
         });
     }
